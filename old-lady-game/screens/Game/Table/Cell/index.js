@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
-import { useNavigation } from '@react-navigation/native'; 
-import EndGameDialog from '../../../../components/EndGameDialog'; 
-import { hasWinner } from '../../gameRules'; 
+import { View, StyleSheet, TouchableOpacity, Text, ImageBackground } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import EndGameDialog from '../../../../components/EndGameDialog';
+import { hasWinner } from '../../gameRules';
 
 const Cell = () => {
     const navigation = useNavigation();
 
     const [boardState, setBoardState] = useState(Array(9).fill(null));
     const [winner, setWinner] = useState(null);
-    const [isGameOver, setIsGameOver] = useState(false); 
+    const [isGameOver, setIsGameOver] = useState(false);
 
     const handleCellClick = (cellIndex) => {
         if (winner || boardState[cellIndex] !== null || isGameOver) {
@@ -19,12 +19,12 @@ const Cell = () => {
         const newBoardState = [...boardState];
         newBoardState[cellIndex] = getNextPlayer();
         setBoardState(newBoardState);
-        
+
         if (hasWinner(newBoardState, cellIndex)) {
             setWinner(getNextPlayer());
-            setIsGameOver(true); 
+            setIsGameOver(true);
         } else if (isBoardFull(newBoardState)) {
-            setIsGameOver(true); 
+            setIsGameOver(true);
         }
     };
 
@@ -39,13 +39,13 @@ const Cell = () => {
     };
 
     const handlePlayAgain = () => {
-        setBoardState(Array(9).fill(null)); 
+        setBoardState(Array(9).fill(null));
         setWinner(null);
-        setIsGameOver(false); 
+        setIsGameOver(false);
     };
 
     const handleQuitGame = () => {
-        navigation.navigate('Home'); 
+        navigation.navigate('Home');
     };
 
     const renderCell = (cellIndex) => {
@@ -75,30 +75,42 @@ const Cell = () => {
     };
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Jogo da Velha</Text>
-            {renderBoard()}
-            {winner && <Text style={styles.winnerText}>Vencedor: {winner}</Text>}
-            <EndGameDialog
-                isOpen={isGameOver} 
-                resultText={winner ? `Vencedor: Jogador ${winner}` : 'Empate'}
-                onClickYes={handlePlayAgain}
-                onClickNo={handleQuitGame}
-            />
-        </View>
+        <ImageBackground source={require('../../../../assets/planodefundojogo.png')} style={styles.container}>
+            <View style={styles.overlay}>
+                <Text style={styles.title}>Jogo da Velha</Text>
+                {renderBoard()}
+                {winner && <Text style={styles.winnerText}>Vencedor: {winner}</Text>}
+                <EndGameDialog
+                    isOpen={isGameOver}
+                    resultText={winner ? `Vencedor: Jogador ${winner}` : 'Empate'}
+                    onClickYes={handlePlayAgain}
+                    onClickNo={handleQuitGame}
+                />
+            </View>
+        </ImageBackground>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        alignItems: 'center',
+        resizeMode: 'cover',
         justifyContent: 'center',
+        alignItems: 'center',
+        width: "100%",
+        height: "100%"
+    },
+    overlay: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     title: {
         fontSize: 24,
         fontWeight: 'bold',
         marginBottom: 20,
+        color: "black",
+        fontFamily: 'Arial',
     },
     board: {
         borderWidth: 2,
